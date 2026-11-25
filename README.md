@@ -70,7 +70,20 @@ or Quit and it's gone.
 ```
 
 To try a change without rebuilding, Quit the tray app first (the two share a single-instance
-lock), then run `.\.venv\Scripts\pythonw.exe run.pyw`. Run `install.ps1` when you're done.
+lock), then run `.\.venv\Scripts\pythonw.exe "$PWD\run.pyw"`. Use the full path, as shown, so
+`install.ps1` and `uninstall.ps1` can find and stop the test copy. Run `install.ps1` when you're done.
 
-App identity (name, exe name, publisher, version) lives in `claude_heartbeat\__init__.py`.
-`make_exe.py` builds from it; copy both for the next Workstation Tools app.
+## Starting the next Workstation Tools app
+
+Copy these four files and set the new app's identity in each:
+
+| File | What to change |
+|---|---|
+| `claude_heartbeat\__init__.py` | `APP_NAME`, `EXE_NAME`, `VERSION` (keep `PUBLISHER = "Workstation Tools"`) |
+| `make_exe.py` | nothing beyond the package it imports from |
+| `install.ps1` | the `$AppName` / `$ExeName` lines at the top |
+| `uninstall.ps1` | the same two lines |
+
+Give it its own icon on the shared navy tile (see `claude_heartbeat\icons.py`), its own
+single-instance lock name, and its own log folder. If you miss a rename in the scripts, the new
+app's install would stop and replace Claude Heartbeat's program folder instead of its own.
