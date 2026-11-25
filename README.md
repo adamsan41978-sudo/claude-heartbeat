@@ -47,6 +47,8 @@ While the icon is green, `pythonw.exe` appears under `SYSTEM:`. Switch off or Qu
 - It doesn't block Windows Update restarts. Set **Settings > Windows Update > Advanced options >
   Active hours** to cover your overnight runs.
 - It doesn't stop a manual Sleep or Shutdown, or a power loss.
+- The Claude Desktop chat app is also named `claude.exe`, but it isn't counted. Only Claude Code
+  sessions hold the PC awake.
 - An idle Claude window counts as running. That's deliberate: a loop waiting for its next tick
   looks idle. Close idle sessions, or switch it off, if you want the PC to sleep.
 

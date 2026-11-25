@@ -9,7 +9,8 @@ finished and repair the project. This tool keeps the PC awake whenever Claude is
 lets it sleep normally otherwise, without the user having to remember anything.
 
 ## Goals
-- While the switch is ON and any `claude.exe` process exists → PC does not idle-sleep.
+- While the switch is ON and any Claude Code `claude.exe` process exists → PC does not idle-sleep.
+  (Amended after review: the Claude Desktop chat app, also named `claude.exe`, does not count.)
 - No `claude.exe`, or switch OFF → normal Balanced-plan behavior (sleep 15 min, display 10 min).
 - Display may still turn off while held awake (system awake, screen off).
 - Tray icon shows the state at a glance; right-click to toggle; starts ON with every launch.
