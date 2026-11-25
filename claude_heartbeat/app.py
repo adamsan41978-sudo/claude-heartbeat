@@ -31,20 +31,12 @@ def main() -> int:
 
     monitor = Monitor(count_processes, on_change, log)
 
-    def toggle() -> None:
-        monitor.set_enabled(not monitor.enabled)
-
     def quit_() -> None:
         monitor.stop()
         log.info("quit")
         icon.stop()
 
-    icon.menu = pystray.Menu(
-        pystray.MenuItem("Keep awake while Claude runs", toggle,
-                         checked=lambda _: monitor.enabled, default=True),
-        pystray.MenuItem("Open log", lambda: os.startfile(LOG_PATH)),
-        pystray.MenuItem("Quit", quit_),
-    )
+    icon.menu = build_menu(monitor, lambda: os.startfile(LOG_PATH), quit_)
 
     def setup(tray) -> None:
         tray.visible = True
@@ -53,6 +45,19 @@ def main() -> int:
     icon.run(setup=setup)
     monitor.stop()  # tray loop ended some other way (e.g. sign-out): release on the way out
     return 0
+
+
+def build_menu(monitor, on_open_log: Callable[[], None], on_quit: Callable[[], None]):
+    """Right-click menu. `monitor` needs .enabled and .set_enabled(bool)."""
+    import pystray
+
+    return pystray.Menu(
+        pystray.MenuItem("Keep awake while Claude runs",
+                         lambda: monitor.set_enabled(not monitor.enabled),
+                         checked=lambda _: monitor.enabled),  # no default: left-click does nothing
+        pystray.MenuItem("Open log", on_open_log),
+        pystray.MenuItem("Quit", on_quit),
+    )
 
 
 def run_safely(main_fn: Callable[[], int], log_path: Path = LOG_PATH) -> int:

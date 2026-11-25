@@ -14,8 +14,8 @@ The screen can still turn off.
 | Dim grey-blue heartbeat | Switch on, no Claude running: normal sleep. |
 | Flat grey line | Switch off: normal sleep. |
 
-- **Left-click** toggles the switch. **Right-click** menu: `Keep awake while Claude runs`,
-  `Open log`, `Quit`.
+- **Right-click** for the menu: `Keep awake while Claude runs` (the on/off switch, check mark =
+  on), `Open log`, `Quit`. Left-click does nothing, so a stray click can't turn the hold off.
 - The switch starts **on** every launch. It checks for Claude every 30 seconds.
 
 ## Install / uninstall
@@ -40,7 +40,8 @@ in PowerShell 5.1: `Get-Content "$env:LOCALAPPDATA\ClaudeHeartbeat\heartbeat.log
 powercfg /requests
 ```
 
-While the icon is green, `pythonw.exe` appears under `SYSTEM:`. Switch off or Quit and it's gone.
+While the icon is green, `SYSTEM:` lists `[PROCESS] \Device\...\Python312\pythonw.exe`: the real
+Python interpreter, not the `.venv` launcher that starts it. Switch off or Quit and it's gone.
 
 ## What it does not do
 
