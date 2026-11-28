@@ -3,9 +3,13 @@
 Future tools reuse TILE and the rounded frame, swapping the glyph and accent color.
 Drawn without anti-aliasing so every pixel is an exact palette color.
 """
+from pathlib import Path
+
 from PIL import Image, ImageDraw
 
 from .state import State
+
+ICO_SIZES = (16, 20, 24, 32, 40, 48, 64, 128, 256)  # every size Explorer/Task Manager/tray asks for
 
 TILE = "#14213D"
 COLORS: dict[State, str] = {
@@ -30,3 +34,10 @@ def make_icon(state: State, size: int = 64) -> Image.Image:
         joint="curve",
     )
     return img
+
+
+def save_ico(path: Path) -> None:
+    """Multi-size .ico of the AWAKE icon; each size drawn natively so small ones stay crisp."""
+    frames = [make_icon(State.AWAKE, s) for s in ICO_SIZES]
+    frames[-1].save(path, format="ICO", sizes=[(s, s) for s in ICO_SIZES],
+                    append_images=frames[:-1])

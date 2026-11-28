@@ -21,12 +21,20 @@ The screen can still turn off.
 ## Install / uninstall
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1     # venv, deps, starts at login, launches now
-powershell -ExecutionPolicy Bypass -File .\uninstall.ps1   # stops it, removes the login shortcut
+powershell -ExecutionPolicy Bypass -File .\install.ps1     # build the exe, install, start at login, launch now
+powershell -ExecutionPolicy Bypass -File .\uninstall.ps1   # stop it, remove the login shortcut and program folder
 ```
 
-`install.ps1` is safe to re-run. After uninstalling, a leftover icon can linger in the tray until
-the mouse passes over it; that's Windows, not a running copy.
+The app installs to `%LOCALAPPDATA%\Programs\ClaudeHeartbeat\ClaudeHeartbeat.exe`. `install.ps1`
+is safe to re-run: after editing the code, run it again to rebuild and replace the running copy.
+After uninstalling, a leftover icon can linger in the tray until the mouse passes over it; that's
+Windows, not a running copy.
+
+## In Task Manager
+
+One process, **Claude Heartbeat** (`ClaudeHeartbeat.exe`), with the heartbeat icon. Its version
+info names the publisher **Workstation Tools**, the shared publisher for this workstation's own
+tools, so they line up together in the Startup apps tab's Publisher column.
 
 ## Log
 
@@ -40,8 +48,8 @@ in PowerShell 5.1: `Get-Content "$env:LOCALAPPDATA\ClaudeHeartbeat\heartbeat.log
 powercfg /requests
 ```
 
-While the icon is green, `SYSTEM:` lists `[PROCESS] \Device\...\Python312\pythonw.exe`: the real
-Python interpreter, not the `.venv` launcher that starts it. Switch off or Quit and it's gone.
+While the icon is green, `SYSTEM:` lists `[PROCESS] \Device\...\ClaudeHeartbeat.exe`. Switch off
+or Quit and it's gone.
 
 ## What it does not do
 
@@ -58,4 +66,24 @@ Python interpreter, not the `.venv` launcher that starts it. Switch off or Quit 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
 .\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe make_exe.py          # build only, into dist\ClaudeHeartbeat\
 ```
+
+To try a change without rebuilding, Quit the tray app first (the two share a single-instance
+lock), then run `.\.venv\Scripts\pythonw.exe "$PWD\run.pyw"`. Use the full path, as shown, so
+`install.ps1` and `uninstall.ps1` can find and stop the test copy. Run `install.ps1` when you're done.
+
+## Starting the next Workstation Tools app
+
+Copy these four files and set the new app's identity in each:
+
+| File | What to change |
+|---|---|
+| `claude_heartbeat\__init__.py` | `APP_NAME`, `EXE_NAME`, `VERSION` (keep `PUBLISHER = "Workstation Tools"`) |
+| `make_exe.py` | nothing beyond the package it imports from |
+| `install.ps1` | the `$AppName` / `$ExeName` lines at the top |
+| `uninstall.ps1` | the same two lines |
+
+Give it its own icon on the shared navy tile (see `claude_heartbeat\icons.py`), its own
+single-instance lock name, and its own log folder. If you miss a rename in the scripts, the new
+app's install would stop and replace Claude Heartbeat's program folder instead of its own.
